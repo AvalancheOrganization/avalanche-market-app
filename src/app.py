@@ -58,7 +58,7 @@ class App:
         return df
 
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def get_geodata():
     return json.load(open("data/countries.geojson"))
 
