@@ -32,27 +32,88 @@ def country_emission(df):
 
 def ratio_with_required_volume(df):
     st.subheader("Ratio with required volume")
+    required_volume = st.number_input(
+        "Required volume of CO2", min_value=1, value=config.WOOD_MASS_YEARLY
+    )
     countries = ["Global"] + list(df.query_country.unique())
     country = st.selectbox("Country to analyse", countries, key=1)
     if country == "Global":
         df_country = df.copy()
     else:
         df_country = df.loc[df.query_country == country]
+    del df
 
-    serie_scopes = [
-        _get_required_volume(df_country[col])
+    df_sums = [
+        _get_required_volume(df_country[["company_name", col]], required_volume)
         for col in ["scope_1_y0", "scope 1 + 2", "scope 1 + 2 + 3"]
     ]
+    df_cumsums = [_get_cumulative_volume(df) for df in df_sums]
     titles = [
         f"{country} {name}" for name in ["scope 1", "scope 1 + 2", "scope 1 + 2 + 3"]
     ]
+    _display_sum(df_sums, titles)
+    _display_cumsum(df_cumsums, titles)
+
+
+def _display_sum(df_sums, titles):
     fig = go.Figure()
-    for title, serie in zip(titles, serie_scopes):
-        fig.add_trace(go.Scatter(x=list(range(len(serie))), y=serie, name=title))
-    fig.update_layout(width=800, height=600, yaxis_type="log")
+    for title, df in zip(titles, df_sums):
+        cols = df.columns
+        company_names = df.company_name.values
+        fig.add_trace(
+            go.Scatter(
+                x=list(range(len(df))),
+                y=df[cols[1]],
+                name=title,
+                hovertemplate="<b>%{text}</b><br>emission ratio: %{y}",
+                text=company_names,
+            )
+        )
+    fig.update_traces(mode="markers")
+    fig.update_layout(
+        title="Sum of ratio",
+        width=800,
+        height=500,
+        yaxis_type="log",
+        xaxis_title="Number of companies",
+    )
     st.plotly_chart(fig)
 
 
-def _get_required_volume(serie):
-    # serie = serie.loc[serie > 0]
-    return (serie / config.WOOD_MASS_YEARLY).sort_values(ascending=True).cumsum()
+def _display_cumsum(df_cumsums, titles):
+    fig = go.Figure()
+    for title, df in zip(titles, df_cumsums):
+        cols = df.columns
+        company_names = df.company_name.values
+        fig.add_trace(
+            go.Scatter(
+                x=list(range(len(df))),
+                y=df[cols[1]],
+                name=title,
+                hovertemplate="<b>%{text}</b><br>cumulative emission ratio: %{y}",
+                text=company_names,
+            )
+        )
+    fig.update_traces(mode="markers")
+    fig.update_layout(
+        title="Cumulative sum of ratio",
+        width=800,
+        height=500,
+        yaxis_type="log",
+        xaxis_title="Number of companies",
+    )
+    st.plotly_chart(fig)
+
+
+def _get_required_volume(df, required_volume):
+    cols = df.columns
+    df[cols[1]] = df[cols[1]] / required_volume
+    df.sort_values(cols[1], inplace=True)
+    return df
+
+
+def _get_cumulative_volume(df):
+    df_copy = df.copy()
+    cols = df_copy.columns
+    df_copy[cols[1]] = df_copy[cols[1]].cumsum()
+    return df_copy

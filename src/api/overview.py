@@ -41,7 +41,7 @@ def country_volume(df, geodata_copy):
         longitude=2.34,
         zoom=0.5,
         min_zoom=0.5,
-        max_zoom=0.5,  # 2
+        max_zoom=2,  # 0.5
         pitch=45,
         bearing=0,
     )

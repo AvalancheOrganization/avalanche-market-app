@@ -94,19 +94,3 @@ def transform(df):
 
 def add_space():
     st.markdown("<br><br>", unsafe_allow_html=True)
-
-
-# def country_emission(df):
-#     # df_sum = (
-#     #    df[["query_country", "scope_1_y0"]].groupby("query_country").sum().reset_index()
-#     # )
-#     countries, emissions = [], []
-#     for this_country, this_df in df[["query_country", "scope_1_y0"]].groupby(
-#         "query_country"
-#     ):
-#         this_df = this_df.loc[this_df.scope_1_y0 > 0]
-#         y = np.log(this_df.scope_1_y0.values)
-#         emissions.append(y)
-#         countries.append(this_country)
-#     fig = ff.create_distplot(emissions, countries)
-#     st.plotly_chart(fig)
