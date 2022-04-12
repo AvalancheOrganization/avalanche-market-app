@@ -1,3 +1,4 @@
+from copy import deepcopy
 import pydeck as pdk
 import streamlit as st
 import plotly.express as px
@@ -13,7 +14,8 @@ def head_metrics(df):
     col3.metric("% having CRC credits", having_credits)
 
 
-def country_volume(df, geodata):
+def country_volume(df, geodata_copy):
+    geodata = deepcopy(geodata_copy)
     countries = set(df.query_country.unique())
     for row in geodata["features"]:
         this_country = row["properties"]["ADMIN"]

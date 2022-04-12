@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import json
-from copy import deepcopy
 
 import streamlit as st
 
@@ -18,7 +17,7 @@ class App:
     def __init__(self) -> None:
         self.db_name = config.DB_NAME
         self.df = self.get_df()
-        self.geodata = deepcopy(get_geodata())
+        self.geodata = get_geodata()
         st.title("Avalanche Market")
         st.text("powered by CDP")
         add_space()
