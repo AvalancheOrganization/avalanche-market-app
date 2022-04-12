@@ -50,6 +50,7 @@ class App:
         emission_x_capture(self.df)
         individual_company(self.df)
 
+    @st.cache(ttl=24 * 60 * 60 * 7)
     def get_df(self) -> pd.DataFrame:
         items = fetch_db(self.db_name)
         df = pd.DataFrame(items)
