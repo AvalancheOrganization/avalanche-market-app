@@ -17,7 +17,7 @@ class App:
     def __init__(self) -> None:
         self.db_name = config.DB_NAME
         self.df = self.get_df()
-        self.geodata = json.load(open("data/countries.geojson"))
+        self.geodata = get_geodata()
         st.title("Avalanche Market")
         st.text("powered by CDP")
         add_space()
@@ -55,6 +55,11 @@ class App:
         df = pd.DataFrame(items)
         df = transform(df)
         return df
+
+
+@st.cache
+def get_geodata():
+    return json.load(open("data/countries.geojson"))
 
 
 def transform(df):

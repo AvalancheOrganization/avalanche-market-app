@@ -38,7 +38,7 @@ def emission_x_capture(df_copy):
 
 
 def individual_company(df):
-    company_name = st.text_input("Company to display")
+    company_name = st.text_input("Company to display", "EDF")
     df_company = df.loc[df.company_name == company_name]
     if df_company.shape[0] > 0:
         cols = df_company.columns
